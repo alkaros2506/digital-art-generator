@@ -1,16 +1,13 @@
 import time
 import requests
-
-from io import BytesIO
 import random
-from PIL import Image
-
-from typing import Any
 import openai
+
+from utils.helpers import file_path
 
 
 def generate_img_url(prompt: str) -> str:
-    response = openai.Image.create(prompt=prompt, n=1, size="1024x1024")
+    response = openai.Image.create(prompt=prompt, n=1, size="512x512")
     return response["data"][0]["url"]
 
 
@@ -26,17 +23,17 @@ def generate_prompt() -> str:
     styles = [
         "anime",
         "abstract",
-        "abstract expressionism",
         "art nouveau",
         "baroque",
         "cubism",
         "dada",
+        "digital art",
+        "modern art",
+        "sculpture",
         "expressionism",
-        "fauvism",
         "impressionism",
         "minimalism",
         "modernism",
-        "pointillism",
         "pop art",
         "post-impressionism",
         "realism",
@@ -44,6 +41,7 @@ def generate_prompt() -> str:
         "rococo",
         "romanticism",
         "surrealism",
+        "grafitti",
     ]
 
     themes = [
@@ -64,8 +62,6 @@ def generate_prompt() -> str:
     ]
 
     protagonists = [
-        "woman",
-        "man",
         "dog",
         "pirate",
         "robot",
@@ -84,9 +80,12 @@ def generate_prompt() -> str:
         "girrafe",
         "tiger",
         "lion",
+        "construction worker",
+        "firefighter",
+        "police officer",
+        "doctor",
     ]
 
-    # 15 unique and very famous artists
     artists = [
         "Leonardo da Vinci",
         "Vincent van Gogh",
@@ -101,8 +100,9 @@ def generate_prompt() -> str:
         "Henri Matisse",
         "Paul Cezanne",
         "Raphael",
-        "Gustav Klimt",
-        "Paul Gauguin",
+        "Banksy",
+        "Frida Kahlo",
+        "Hopare",
     ]
 
     style = random.choice(styles)
@@ -112,7 +112,7 @@ def generate_prompt() -> str:
 
     prompt = f"""
     This is an art piece of {protagonist} in the style of {style} by {artist}.
-    The painting is about {theme}.
+    This art piece is about {theme}.
     """
 
     print(prompt)
@@ -125,7 +125,7 @@ def download_img(url: str, img_index) -> str:
     This function downloads an image from a given url.
     """
     # encode url to be filename friendly (remove special characters)
-    filename = f"/Users/alkis/Desktop/image-{img_index}-{time.time()}.png"
+    filename = file_path(f"image-{img_index}-{time.time()}.png")
     with open(filename, "wb") as handle:
         response = requests.get(url, stream=True)
 
@@ -140,7 +140,7 @@ def download_img(url: str, img_index) -> str:
     return filename
 
 
-def get_n_images(n=4) -> list[Any]:
+def get_n_images(n=4) -> list[any]:
     """
     This function generates n images using the OpenAI API.
     """
@@ -157,7 +157,3 @@ def get_n_images(n=4) -> list[Any]:
             }
         )
     return images
-
-
-if __name__ == "__main__":
-    get_n_images(3)
